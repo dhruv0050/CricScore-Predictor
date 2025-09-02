@@ -1,0 +1,85 @@
+{
+  "India": {
+    "Wankhede Stadium, Mumbai": 180,
+    "M Chinnaswamy Stadium, Bengaluru": 185,
+    "Eden Gardens, Kolkata": 168,
+    "Narendra Modi Stadium, Ahmedabad": 165,
+    "Arun Jaitley Stadium, Delhi": 160,
+    "MA Chidambaram Stadium (Chepauk), Chennai": 155,
+    "Rajiv Gandhi Intl, Hyderabad": 165,
+    "PCA IS Bindra, Mohali": 170,
+    "SCA Stadium, Rajkot": 175,
+    "Holkar Stadium, Indore": 180
+  },
+  "Pakistan": {
+    "Gaddafi Stadium, Lahore": 160,
+    "National Stadium, Karachi": 165,
+    "Rawalpindi Cricket Stadium": 170,
+    "Multan Cricket Stadium": 160
+  },
+  "Bangladesh": {
+    "Sher-e-Bangla (Mirpur), Dhaka": 145,
+    "ZACS, Chattogram": 160,
+    "Sylhet International, Sylhet": 155
+  },
+  "Sri Lanka": {
+    "R Premadasa, Colombo": 150,
+    "Pallekele Intl, Kandy": 155,
+    "Mahinda Rajapaksa, Hambantota": 155,
+    "Galle International, Galle": 150
+  },
+  "United Arab Emirates": {
+    "Dubai International, Dubai": 152,
+    "Sheikh Zayed, Abu Dhabi": 148,
+    "Sharjah Cricket Stadium, Sharjah": 165
+  },
+  "Australia": {
+    "Adelaide Oval, Adelaide": 165,
+    "SCG, Sydney": 160,
+    "MCG, Melbourne": 155,
+    "Optus Stadium, Perth": 165,
+    "The Gabba, Brisbane": 165,
+    "Blundstone Arena, Hobart": 160
+  },
+  "New Zealand": {
+    "Eden Park, Auckland": 175,
+    "McLean Park, Napier": 180,
+    "Sky Stadium, Wellington": 155,
+    "Seddon Park, Hamilton": 165,
+    "University Oval, Dunedin": 155
+  },
+  "England": {
+    "Trent Bridge, Nottingham": 180,
+    "The Oval, London": 172,
+    "Edgbaston, Birmingham": 165,
+    "Old Trafford, Manchester": 160,
+    "Lord's, London": 160,
+    "Headingley, Leeds": 165,
+    "Rose Bowl, Southampton": 160,
+    "Riverside, Chester-le-Street": 155
+  },
+  "South Africa": {
+    "Wanderers, Johannesburg": 178,
+    "SuperSport Park, Centurion": 180,
+    "Newlands, Cape Town": 160,
+    "St George's Park, Gqeberha": 155,
+    "Kingsmead, Durban": 160,
+    "Boland Park, Paarl": 155
+  },
+  "West Indies": {
+    "Kensington Oval, Bridgetown": 160,
+    "Sabina Park, Kingston": 155,
+    "Queen's Park Oval, Port of Spain": 158,
+    "Providence Stadium, Guyana": 150,
+    "Daren Sammy, Gros Islet": 165
+  },
+  "Zimbabwe": {
+    "Harare Sports Club, Harare": 145,
+    "Queens Sports Club, Bulawayo": 150
+  },
+  "Ireland": {
+    "Malahide (Village), Dublin": 160,
+    "Civil Service Cricket Club (Stormont), Belfast": 150,
+    "Bready Cricket Club, Bready": 155
+  }
+}
