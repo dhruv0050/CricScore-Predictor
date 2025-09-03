@@ -23,7 +23,6 @@ function Prediction() {
     current_run_rate: '',
   });
 
-  // 🔽 FIX 1: This line was missing. It declares the state for the prediction result.
   const [predictionResult, setPredictionResult] = useState(null);
   
   // State for loading and errors
@@ -103,14 +102,12 @@ function Prediction() {
 
   }, [formData.overs, formData.wicketsFallen, formData.score]);
 
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     if (formError) {
       setError('Please fix the errors in the form before predicting.');
       return;
@@ -128,7 +125,6 @@ function Prediction() {
       ...derivedData, // Add the auto-calculated values
     };
 
-    // 🔽 FIX 2: Corrected the typo in the IP address (1227 -> 127)
     axios.post('http://127.0.0.1:5000/predict_score', payload)
       .then(response => {
         setPredictionResult(response.data);
@@ -143,96 +139,257 @@ function Prediction() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 font-sans">
-      {/* Form Card */}
-      <div className="w-full max-w-4xl bg-white p-8 rounded-2xl shadow-xl mb-8">
-        <h2 className="text-3xl font-bold text-gray-800 text-center mb-6">Predict T20 Score</h2>
-        <form onSubmit={handleSubmit}>
-          {/* Row 1: Country & Venue */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <label className="block mb-2 font-semibold text-gray-700">Country</label>
-              <select value={selectedCountry} onChange={e => setSelectedCountry(e.target.value)} required className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                {Object.keys(venues).map(country => <option key={country} value={country}>{country}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block mb-2 font-semibold text-gray-700">Venue</label>
-              <select value={selectedVenue} onChange={e => setSelectedVenue(e.target.value)} required className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                {selectedCountry && venues[selectedCountry] && Object.keys(venues[selectedCountry]).map(venue => <option key={venue} value={venue}>{venue}</option>)}
-              </select>
-            </div>
-          </div>
-          
-          {/* Row 2: Primary Match Inputs */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <div>
-              <label className="block mb-2 font-semibold text-gray-700">Current Score</label>
-              <input type="number" name="score" value={formData.score} onChange={handleInputChange} required placeholder="e.g., 94" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
-            </div>
-            <div>
-              <label className="block mb-2 font-semibold text-gray-700">Current Over</label>
-              <input type="number" step="0.1" name="overs" value={formData.overs} onChange={handleInputChange} required placeholder="e.g., 11.4" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
-            </div>
-            <div>
-              <label className="block mb-2 font-semibold text-gray-700">Wickets Fallen</label>
-              <input type="number" name="wicketsFallen" value={formData.wicketsFallen} onChange={handleInputChange} required placeholder="e.g., 1" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
-            </div>
-          </div>
-          
-          {/* Row 3: Auto-Calculated Fields (Disabled) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <div>
-              <label className="block mb-2 font-semibold text-gray-400">Wickets Left</label>
-              <input type="number" name="wickets_left" value={derivedData.wickets_left} disabled className="w-full p-3 border border-gray-200 bg-gray-100 rounded-lg cursor-not-allowed" />
-            </div>
-            <div>
-              <label className="block mb-2 font-semibold text-gray-400">Deliveries Left</label>
-              <input type="number" name="delivery_left" value={derivedData.delivery_left} disabled className="w-full p-3 border border-gray-200 bg-gray-100 rounded-lg cursor-not-allowed" />
-            </div>
-            <div>
-              <label className="block mb-2 font-semibold text-gray-400">Current Run Rate</label>
-              <input type="number" step="0.01" name="current_run_rate" value={derivedData.current_run_rate} disabled className="w-full p-3 border border-gray-200 bg-gray-100 rounded-lg cursor-not-allowed" />
-            </div>
-          </div>
-
-          {/* Row 4: Last 5 Overs Data */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <label className="block mb-2 font-semibold text-gray-700">Runs in Last 5 Overs</label>
-              <input type="number" name="run_in_last5" value={formData.run_in_last5} onChange={handleInputChange} required placeholder="e.g., 42" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
-            </div>
-            <div>
-              <label className="block mb-2 font-semibold text-gray-700">Wickets in Last 5 Overs</label>
-              <input type="number" name="wickets_in_last5" value={formData.wickets_in_last5} onChange={handleInputChange} required placeholder="e.g., 1" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
-            </div>
-          </div>
-          
-          {formError && <p className="text-red-500 text-center mb-4 font-semibold">{formError}</p>}
-
-          <button type="submit" disabled={loading || !!formError} className="w-full py-4 mt-2 text-lg font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-300 disabled:bg-blue-300 disabled:cursor-not-allowed shadow-md">
-            {loading ? 'Predicting...' : 'Predict Score'}
-          </button>
-        </form>
-        {error && <p className="text-red-500 text-center mt-4 font-semibold">{error}</p>}
+    <div className="min-h-screen bg-gradient-to-br from-slate-800 via-gray-800 to-slate-900 p-4 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-20 right-1/4 w-96 h-96 bg-slate-400 rounded-full mix-blend-multiply filter blur-xl opacity-8 animate-pulse"></div>
+        <div className="absolute bottom-20 left-1/4 w-96 h-96 bg-gray-400 rounded-full mix-blend-multiply filter blur-xl opacity-8 animate-pulse" style={{animationDelay: '3s'}}></div>
+        <div className="absolute top-1/2 right-10 w-64 h-64 bg-stone-400 rounded-full mix-blend-multiply filter blur-xl opacity-8 animate-pulse" style={{animationDelay: '1.5s'}}></div>
       </div>
 
-      {/* Result Card */}
-      {predictionResult && (
-        <div className="w-full max-w-4xl bg-white p-8 rounded-2xl shadow-xl text-center">
-          <h3 className="text-2xl font-bold text-gray-800 mb-4">Prediction Result</h3>
-          <div className="flex justify-center items-baseline">
-            <p className="text-7xl font-bold text-blue-600">{predictionResult.predicted_final_score}</p>
-            <span className="text-2xl text-gray-500 ml-2">runs</span>
-          </div>
-          <p className="text-lg text-gray-600 mt-4">
-            The predicted final score is around <strong>{predictionResult.predicted_final_score}</strong>.
-          </p>
-          <p className="text-md text-gray-500 mt-2">
-            (Venue Average: {predictionResult.venue_average_score} runs)
-          </p>
+      {/* Floating cricket elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-16 left-16 text-white opacity-5 text-6xl animate-bounce" style={{animationDelay: '1s'}}>📊</div>
+        <div className="absolute top-32 right-24 text-white opacity-5 text-4xl animate-bounce" style={{animationDelay: '2s'}}>🎯</div>
+        <div className="absolute bottom-40 left-12 text-white opacity-5 text-5xl animate-bounce">🏏</div>
+      </div>
+
+      <div className="relative z-10 max-w-6xl mx-auto py-8">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-gray-100 via-slate-200 to-stone-200 bg-clip-text text-transparent mb-2">
+            Score Prediction
+          </h1>
+          <div className="w-20 h-1 bg-gradient-to-r from-slate-500 to-gray-600 rounded-full mx-auto"></div>
         </div>
-      )}
+
+        {/* Main Form Card */}
+        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl mb-8">
+          <div className="space-y-8">
+            {/* Venue Selection */}
+            <div className="space-y-6">
+              <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+                <span className="w-2 h-2 bg-slate-400 rounded-full mr-3"></span>
+                Match Venue
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">Country</label>
+                  <select 
+                    value={selectedCountry} 
+                    onChange={e => setSelectedCountry(e.target.value)} 
+                    required 
+                    className="w-full p-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-slate-400 focus:border-transparent backdrop-blur-sm transition-all duration-300"
+                  >
+                    {Object.keys(venues).map(country => (
+                      <option key={country} value={country} className="bg-slate-800">{country}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">Venue</label>
+                  <select 
+                    value={selectedVenue} 
+                    onChange={e => setSelectedVenue(e.target.value)} 
+                    required 
+                    className="w-full p-4 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-slate-400 focus:border-transparent backdrop-blur-sm transition-all duration-300"
+                  >
+                    {selectedCountry && venues[selectedCountry] && Object.keys(venues[selectedCountry]).map(venue => (
+                      <option key={venue} value={venue} className="bg-slate-800">{venue}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Current Match Status */}
+            <div className="space-y-6">
+              <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+                <span className="w-2 h-2 bg-gray-400 rounded-full mr-3"></span>
+                Current Match Status
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">Current Score</label>
+                  <input 
+                    type="number" 
+                    name="score" 
+                    value={formData.score} 
+                    onChange={handleInputChange} 
+                    required 
+                    placeholder="e.g., 94" 
+                    className="w-full p-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-slate-400 focus:border-transparent backdrop-blur-sm transition-all duration-300"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">Current Over</label>
+                  <input 
+                    type="number" 
+                    step="0.1" 
+                    name="overs" 
+                    value={formData.overs} 
+                    onChange={handleInputChange} 
+                    required 
+                    placeholder="e.g., 11.4" 
+                    className="w-full p-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-slate-400 focus:border-transparent backdrop-blur-sm transition-all duration-300"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">Wickets Fallen</label>
+                  <input 
+                    type="number" 
+                    name="wicketsFallen" 
+                    value={formData.wicketsFallen} 
+                    onChange={handleInputChange} 
+                    required 
+                    placeholder="e.g., 3" 
+                    className="w-full p-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-slate-400 focus:border-transparent backdrop-blur-sm transition-all duration-300"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Auto-calculated Fields */}
+            <div className="space-y-6">
+              <h3 className="text-xl font-semibold text-gray-400 mb-4 flex items-center">
+                <span className="w-2 h-2 bg-gray-500 rounded-full mr-3"></span>
+                Auto-calculated Values
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-500">Wickets Left</label>
+                  <input 
+                    type="number" 
+                    name="wickets_left"
+                    value={derivedData.wickets_left} 
+                    disabled 
+                    className="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-gray-400 cursor-not-allowed backdrop-blur-sm"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-500">Deliveries Left</label>
+                  <input 
+                    type="number" 
+                    name="delivery_left"
+                    value={derivedData.delivery_left} 
+                    disabled 
+                    className="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-gray-400 cursor-not-allowed backdrop-blur-sm"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-500">Current Run Rate</label>
+                  <input 
+                    type="number" 
+                    step="0.01" 
+                    name="current_run_rate"
+                    value={derivedData.current_run_rate} 
+                    disabled 
+                    className="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-gray-400 cursor-not-allowed backdrop-blur-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Last 5 Overs */}
+            <div className="space-y-6">
+              <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+                <span className="w-2 h-2 bg-stone-400 rounded-full mr-3"></span>
+                Recent Performance (Last 5 Overs)
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">Runs in Last 5 Overs</label>
+                  <input 
+                    type="number" 
+                    name="run_in_last5" 
+                    value={formData.run_in_last5} 
+                    onChange={handleInputChange} 
+                    required 
+                    placeholder="e.g., 42" 
+                    className="w-full p-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-slate-400 focus:border-transparent backdrop-blur-sm transition-all duration-300"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">Wickets in Last 5 Overs</label>
+                  <input 
+                    type="number" 
+                    name="wickets_in_last5" 
+                    value={formData.wickets_in_last5} 
+                    onChange={handleInputChange} 
+                    required 
+                    placeholder="e.g., 1" 
+                    className="w-full p-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-slate-400 focus:border-transparent backdrop-blur-sm transition-all duration-300"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Error Display */}
+            {formError && (
+              <div className="bg-red-500/20 border border-red-500/30 rounded-xl p-4">
+                <p className="text-red-300 text-center font-medium">{formError}</p>
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <div className="pt-4">
+              <button 
+                type="button"
+                onClick={handleSubmit}
+                disabled={loading || !!formError}
+                className="w-full group relative overflow-hidden py-4 px-8 text-lg font-semibold text-white bg-gradient-to-r from-slate-600 via-gray-600 to-stone-600 rounded-2xl shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              >
+                <span className="relative z-10 flex items-center justify-center">
+                  {loading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
+                      Analyzing Match Data...
+                    </>
+                  ) : (
+                    <>
+                      Predict Final Score
+                      <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                    </>
+                  )}
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-700 via-gray-700 to-stone-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </button>
+            </div>
+          </div>
+
+          {/* General Error Display */}
+          {error && (
+            <div className="mt-6 bg-red-500/20 border border-red-500/30 rounded-xl p-4">
+              <p className="text-red-300 text-center font-medium">{error}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Result Card */}
+        {predictionResult && (
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl text-center animate-fade-in">
+            <h3 className="text-2xl md:text-3xl font-bold text-white mb-6">Prediction Result</h3>
+            
+            <div className="bg-gradient-to-r from-slate-500/20 to-gray-500/20 rounded-2xl p-8 mb-6 border border-white/10">
+              <div className="flex justify-center items-baseline mb-4">
+                <span className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-slate-300 to-gray-300 bg-clip-text text-transparent">
+                  {predictionResult.predicted_final_score}
+                </span>
+                <span className="text-xl md:text-2xl text-gray-300 ml-3">runs</span>
+              </div>
+              
+              <p className="text-lg text-gray-300 mb-2">
+                Predicted final score based on current match dynamics
+              </p>
+              <p className="text-sm text-gray-400">
+                Venue average: <span className="text-slate-300 font-semibold">{predictionResult.venue_average_score}</span> runs
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
